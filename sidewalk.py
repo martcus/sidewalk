@@ -194,8 +194,12 @@ class Sidewalk:
         try:
             manifest = {"commands": {}}
             if self.manifest_path.exists():
-                with open(self.manifest_path, 'r') as f:
-                    manifest = json.load(f)
+                try:
+                    with open(self.manifest_path, 'r') as f:
+                        manifest = json.load(f)
+                except json.JSONDecodeError:
+                    self.logger.warning("Corrupted manifest file. Starting fresh.")
+                    manifest = {"commands": {}}
 
             manifest["commands"][cmd_name] = cmd_file
 
